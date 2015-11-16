@@ -9,6 +9,7 @@ Bootstrap DataGrid is a simple tool used to display data with Bootstrap. It is e
 
 ## How to
 * Use simple HTML at your html (jsp, php) page (you can change styles as you want).
+
 ```html
 <div class="row">
 	<div class="col-md-12">
@@ -22,6 +23,7 @@ Bootstrap DataGrid is a simple tool used to display data with Bootstrap. It is e
 </div>
 ```
 * Use js code to init it.
+
 ```javascript
 $('#datagrid').twbsDatagrid({
 	url : 'data.json',				// request url
@@ -35,6 +37,7 @@ $('#datagrid').twbsDatagrid({
 });
 ```
 * data.json just like this.
+
 ```javascript
 {
 	"total" : 18,
@@ -48,6 +51,7 @@ $('#datagrid').twbsDatagrid({
 }
 ```
 * You can change the pagination ul id, if it changes, you must config it when datagrid init
+
 ```html
 <ul id="pag" class="pagination"></ul>
 ```
@@ -56,6 +60,7 @@ $('#datagrid').twbsDatagrid({
 	*`rows`: integer, means current page size.
 	*`params`: string, like this `{ "testParam" : "test" }`.
 * Java example:
+
 ```java
 @ResponseBody
 @RequestMapping(value = "/data")
