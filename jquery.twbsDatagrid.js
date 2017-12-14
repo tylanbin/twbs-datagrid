@@ -131,12 +131,16 @@
 				var opts = $.data(this, 'twbsDatagrid').options;
 				// destroy old pagination
 				$(opts.pagination).empty();
-				$(opts.pagination).removeData("twbs-pagination");
-				$(opts.pagination).unbind("page");
+				$(opts.pagination).removeData('twbs-pagination');
+				$(opts.pagination).off('page');
 				// add param and reinit
 				$.extend(opts.params, param);
 				$.fn.twbsDatagrid.initData(this);
 			});
+		},
+		options : function(jq) {
+			// get dg's config
+			return $.data(jq[0], 'twbsDatagrid').options;
 		}
 	};
 

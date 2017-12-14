@@ -123,10 +123,19 @@ $('#datagrid').twbsDatagrid({
 ```
 
 ## Methods
+* reload
+
 ```javascript
 $('#datagrid').twbsDatagrid('reload', {
     param_1 : 'val',
     param_2 : 111,
     param_3 : 10.08
 });
+```
+
+* options
+
+```javascript
+var opts = $('#datagrid').twbsDatagrid('options');
+console.log(JSON.stringify(opts));
 ```
