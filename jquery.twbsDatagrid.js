@@ -133,6 +133,8 @@
 				$(opts.pagination).empty();
 				$(opts.pagination).removeData('twbs-pagination');
 				$(opts.pagination).off('page');
+				// return to the first page
+				opts.current = 1;
 				// add param and reinit
 				$.extend(opts.params, param);
 				$.fn.twbsDatagrid.initData(this);
