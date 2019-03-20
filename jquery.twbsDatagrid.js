@@ -111,7 +111,7 @@
 							}
 						} else {
 							if (formatter) {
-								tbody += '<td>' + formatter(null, obj) + '</td>';
+								tbody += '<td>' + formatter('', obj) + '</td>';
 							} else {
 								tbody += '<td>&nbsp;</td>';
 							}
