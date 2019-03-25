@@ -89,20 +89,23 @@ public String data(int page, int rows, String params) {
 ## Options
 ```javascript
 $('#datagrid').twbsDatagrid({
-    url : 'data.json',// request url (*nessesary)
-    pagination : '#dg-pagination',// pagination plugin id (default: '#dg-pagination')
-    pageSize : 10,// page size (default: 10)
-    params : {},// custom params (it will convert to string when send request)
-    method : 'post',// ajax method, post/get (default: 'post')
-    language : {// pagination plugin button language
+    url : 'data.json',                  // request url (*nessesary)
+    pagination : '#dg-pagination',      // pagination plugin id (default: '#dg-pagination')
+    pageSize : 10,                      // page size (default: 10)
+    params : {},                        // custom params (it will convert to string when send request)
+    method : 'post',                    // ajax method, post/get (default: 'post')
+    language : {                        // pagination plugin button language
         first : 'First',
         prev : 'Prev',
         next : 'Next',
         last : 'Last'
-    }
-    columns : [{// datagrid columns (*nessesary)
-        field : 'username',// json object key
-        title : 'Username'// datagrid column name
+    },
+    columns : [{                        // datagrid columns (*nessesary)
+        field : 'username',             // json object key
+        title : 'Username',             // datagrid column name
+        hidden : true,                  // hide/show this column
+        thStyle : 'text-align:center;', // use this into th's style
+        tdStyle : 'text-align:center;'  // use this into td's style
     }, {
         field : 'role',
         title : 'Role'
