@@ -47,36 +47,49 @@
 				} else {
 					total = parseInt(data.total / opts.pageSize) + 1;
 				}
-				// use twbs-pagination
-				$(opts.pagination).twbsPagination({
-					startPage : opts.current,
-					totalPages : total,
-					visiblePages : 5,
-					first : opts.language.first,
-					prev : opts.language.prev,
-					next : opts.language.next,
-					last : opts.language.last,
-					onPageClick : function(event, page) {
-						// set current page
-						$.extend(opts, {
-							current : page
-						});
-						// set pagination ajax action
-						$.ajax({
-							type : opts.method,
-							url : opts.url,
-							data : {
-								page : page,
-								rows : opts.pageSize,
-								params : JSON.stringify(opts.params)
-							},
-							dataType : 'json',
-							success : function(data) {
-								$.fn.twbsDatagrid.initHtml(target, data, opts.columns);
-							}
-						});
-					}
-				});
+				if (total > 0) {
+					// use twbs-pagination
+					$(opts.pagination).twbsPagination({
+						startPage : opts.current,
+						totalPages : total,
+						visiblePages : 5,
+						first : opts.language.first,
+						prev : opts.language.prev,
+						next : opts.language.next,
+						last : opts.language.last,
+						onPageClick : function(event, page) {
+							// set current page
+							$.extend(opts, {
+								current : page
+							});
+							// set pagination ajax action
+							$.ajax({
+								type : opts.method,
+								url : opts.url,
+								data : {
+									page : page,
+									rows : opts.pageSize,
+									params : JSON.stringify(opts.params)
+								},
+								dataType : 'json',
+								success : function(data) {
+									$.fn.twbsDatagrid.initHtml(target, data, opts.columns);
+								}
+							});
+						}
+					});
+				} else {
+					// init a static twbs-pagination
+					$(opts.pagination).twbsPagination({
+						startPage : 1,
+						totalPages : 1,
+						visiblePages : 5,
+						first : opts.language.first,
+						prev : opts.language.prev,
+						next : opts.language.next,
+						last : opts.language.last
+					});
+				}
 			}
 		});
 	};
@@ -87,7 +100,12 @@
 			// init table head
 			var thead = '<thead><tr>';
 			for (var i = 0; i < columns.length; i++) {
-				thead += '<th>' + columns[i].title + '</th>';
+				if (columns[i].hidden && columns[i].hidden == true) {
+					// if hidden attr is true, hide the column
+				} else {
+					var style = columns[i].thStyle ? columns[i].thStyle : '';
+					thead += '<th style="' + style + '">' + columns[i].title + '</th>';
+				}
 			}
 			thead += '</tr></thead>';
 			// init table body
@@ -98,22 +116,27 @@
 					var obj = data.datas[i];
 					tbody += '<tr>';
 					for (var j = 0; j < columns.length; j++) {
-						// get column name
-						var field = columns[j].field;
-						// get column formatter method
-						var formatter = columns[j].formatter;
-						// handle column data
-						if (obj[field] && obj[field] != 'null') {
-							if (formatter) {
-								tbody += '<td>' + formatter(obj[field], obj) + '</td>';
-							} else {
-								tbody += '<td>' + obj[field] + '</td>';
-							}
+						if (columns[j].hidden && columns[j].hidden == true) {
+							// if hidden attr is true, hide the column
 						} else {
+							// get column attrs
+							var field = columns[j].field;
+							var style = columns[j].tdStyle ? columns[j].tdStyle : '';
+							// get column formatter method
+							var formatter = columns[j].formatter;
+							// handle column data
+							var val = '';
+							var row = {};
+							if (obj) {
+								row = obj;
+								if (obj[field] && obj[field] != 'null' && obj[field] != 'undefined') {
+									val = obj[field];
+								}
+							}
 							if (formatter) {
-								tbody += '<td>' + formatter('', obj) + '</td>';
+								tbody += '<td style="' + style + '">' + formatter(val, row) + '</td>';
 							} else {
-								tbody += '<td>&nbsp;</td>';
+								tbody += '<td style="' + style + '">' + val + '</td>';
 							}
 						}
 					}

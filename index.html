@@ -7,14 +7,14 @@
 <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
 <title>Bootstrap DataGrid</title>
 <!-- Bootstrap -->
-<link href="assets/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet">
+<link href="assets/bootstrap-3.4.1/css/bootstrap.min.css" rel="stylesheet">
 <link href="assets/common/css/style.css" rel="stylesheet">
 <link href="assets/google-code-prettify/prettify.css" type="text/css" rel="stylesheet">
 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 <!--[if lt IE 9]>
-<script src="assets/bootstrap-3.3.7/js/html5shiv.min.js"></script>
-<script src="assets/bootstrap-3.3.7/js/respond.min.js"></script>
+<script src="assets/common/js/html5shiv.min.js"></script>
+<script src="assets/common/js/respond.min.js"></script>
 <![endif]-->
 </head>
 <body onload="prettyPrint()">
@@ -201,20 +201,23 @@ public String data(int page, int rows, String params) {
 					<li>
 <pre class="prettyprint">
 $('#datagrid').twbsDatagrid({
-    url : 'data.json',			// request url (*nessesary)
-    pagination : '#dg-pagination',	// pagination plugin id (default: '#dg-pagination')
-    pageSize : 10,			// page size (default: 10)
-    params : {},			// custom params (it will convert to string when send request)
-    method : 'post',			// ajax method, post/get (default: 'post')
-    language : {			// pagination plugin button language
+    url : 'data.json',                  // request url (*nessesary)
+    pagination : '#dg-pagination',      // pagination plugin id (default: '#dg-pagination')
+    pageSize : 10,                      // page size (default: 10)
+    params : {},                        // custom params (it will convert to string when send request)
+    method : 'post',                    // ajax method, post/get (default: 'post')
+    language : {                        // pagination plugin button language
         first : 'First',
         prev : 'Prev',
         next : 'Next',
         last : 'Last'
     }
-    columns : [{			// datagrid columns (*nessesary)
-        field : 'username',		// json object key
-        title : 'Username'		// datagrid column name
+    columns : [{                        // datagrid columns (*nessesary)
+        field : 'username',             // json object key
+        title : 'Username'              // datagrid column name
+        hidden : true,                  // hide/show this column
+        thStyle : 'text-align:center;', // use this into th's style
+        tdStyle : 'text-align:center;'  // use this into td's style
     }, {
         field : 'role',
         title : 'Role'
@@ -307,11 +310,11 @@ console.log(JSON.stringify(opts))
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 	<script src="assets/common/js/jquery.min.js"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
-	<script src="assets/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+	<script src="assets/bootstrap-3.4.1/js/bootstrap.min.js"></script>
 	<!-- google-code-prettify -->
 	<script src="assets/google-code-prettify/prettify.js"></script>
 	<!-- bootstrap datagrid plugin -->
-	<script src="assets/twbs-pagination-1.4.1/jquery.twbsPagination.min.js"></script>
+	<script src="assets/twbs-pagination-1.4.2/jquery.twbsPagination.min.js"></script>
 	<script src="jquery.twbsDatagrid.js"></script>
 	<!-- page script -->
 	<script type="text/javascript">
@@ -332,6 +335,8 @@ console.log(JSON.stringify(opts))
 				}, {
 					field : 'test',
 					title : 'Status',
+					thStyle : 'text-align:center;width:200px;',
+					tdStyle : 'text-align:center;',
 					formatter : function(val, row) {
 						var html =
 							'<a class="btn btn-success btn-xs" href="#">' +
