@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<title>Bootstrap DataGrid</title>
+<!-- Bootstrap -->
+<link href="assets/bootstrap-3.4.1/css/bootstrap.min.css" rel="stylesheet">
+<link href="assets/common/css/style.css" rel="stylesheet">
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+<script src="assets/common/js/html5shiv.min.js"></script>
+<script src="assets/common/js/respond.min.js"></script>
+<![endif]-->
+<link rel="shortcut icon" href="assets/favicon.ico">
+</head>
+<body>
+	<!-- Page Content -->
+	<div class="container">
+		<table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+			<tr>
+				<th style="text-align: right;width: 35%;">Price</th>
+				<td style="text-align: right;" id="price"></td>
+			</tr>
+			<tr>
+				<th style="text-align: center;" colspan="2">tw-pool</th>
+			</tr>
+			<tr>
+				<th style="text-align: right;">Balance</th>
+				<td style="text-align: right;" id="balance"></td>
+			</tr>
+			<tr>
+				<th style="text-align: right;">Paid</th>
+				<td style="text-align: right;" id="paid"></td>
+			</tr>
+			<tr>
+				<th style="text-align: center;" colspan="2">ec1ipse.me</th>
+			</tr>
+			<tr>
+				<th style="text-align: right;">Ore1</th>
+				<td style="text-align: right;" id="ore1"></td>
+			</tr>
+			<tr>
+				<th style="text-align: right;">Ore2</th>
+				<td style="text-align: right;" id="ore2"></td>
+			</tr>
+			<tr>
+				<th style="text-align: right;">Ore3</th>
+				<td style="text-align: right;" id="ore3"></td>
+			</tr>
+			<tr>
+				<th style="text-align: right;">Total</th>
+				<td style="text-align: right;" id="total"></td>
+			</tr>
+		</table>
+	</div>
+	<!-- /.container -->
+	
+	<!-- scripts -->
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="assets/common/js/jquery.min.js"></script>
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script src="assets/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+	<!-- page script -->
+	<script type="text/javascript">
+		let addrs = [
+			'FHD4Rsuij1FkMPTJ5dGszSU7H2cfW87n8kpTHc8DoNn3',
+			'7zuzLDAAZum3HDxyyJs8vpFZbMzGXiX5grifpZbTzzxc',
+		    'CBHiS6kUZPCbkTYzdinJLbFfe3xVkv8csE8dHgG2BcNP',
+		];
+		$(function() {
+			let ore = 'oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp';
+		    $.ajax({
+				url : 'https://price.jup.ag/v6/price?ids=' + ore,
+				type : 'get',
+				dataType : 'json',
+				async : false,
+				success : function(data) {
+					if (data) {
+						let price = Number(data.data[ore].price);
+						$('#price').text(price.toFixed(8));
+					}
+				}
+			});
+			
+			let url = 'https://www2.tw-pool.com/api/worker_stats?address=' + addrs[0] + '&mode=all&excludeWorker=true'
+			$.ajax({
+				url : url,
+				type : 'get',
+				dataType : 'json',
+				success : function(data) {
+					if (data) {
+						$('#balance').text(data.balance.toFixed(8));
+						$('#paid').text(data.paid.toFixed(8));
+					}
+				}
+			});
+			
+			let api = 'https://ec1ipse.me/miner/rewards?pubkey=';
+			let total = 0;
+			for (let i = 0; i < addrs.length; i++) {
+				$.ajax({
+					url : api + addrs[i],
+					type : 'get',
+					dataType : 'json',
+					async : false,
+					success : function(data) {
+						if (data) {
+							let result = Number(data);
+							total += result;
+							$('#ore' + (i + 1)).text(result.toFixed(8));
+						}
+					}
+				});
+			}
+			$('#total').text(total.toFixed(8));
+		})
+	</script>
+</body>
+</html>
