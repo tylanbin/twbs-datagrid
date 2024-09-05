@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="assets/ore.png">
 <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
 <title>Bootstrap DataGrid</title>
 <!-- Bootstrap -->
@@ -15,32 +16,14 @@
 <script src="assets/common/js/html5shiv.min.js"></script>
 <script src="assets/common/js/respond.min.js"></script>
 <![endif]-->
-<link rel="shortcut icon" href="assets/favicon.ico">
+<link rel="shortcut icon" href="assets/ore.png">
 </head>
 <body>
 	<!-- Page Content -->
 	<div class="container">
 		<table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
 			<tr>
-				<th style="text-align: right;width: 35%;">Price</th>
-				<td style="text-align: right;" id="price"></td>
-			</tr>
-			<tr>
-				<th style="text-align: center;" colspan="2">tw-pool</th>
-			</tr>
-			<tr>
-				<th style="text-align: right;">Balance</th>
-				<td style="text-align: right;" id="balance"></td>
-			</tr>
-			<tr>
-				<th style="text-align: right;">Paid</th>
-				<td style="text-align: right;" id="paid"></td>
-			</tr>
-			<tr>
-				<th style="text-align: center;" colspan="2">ec1ipse.me</th>
-			</tr>
-			<tr>
-				<th style="text-align: right;">Ore1</th>
+				<th style="text-align: right;width: 35%;">Ore1</th>
 				<td style="text-align: right;" id="ore1"></td>
 			</tr>
 			<tr>
@@ -54,6 +37,14 @@
 			<tr>
 				<th style="text-align: right;">Total</th>
 				<td style="text-align: right;" id="total"></td>
+			</tr>
+			<tr>
+				<th style="text-align: right;">Price</th>
+				<td style="text-align: right;" id="price"></td>
+			</tr>
+			<tr>
+				<th style="text-align: right;">Amount</th>
+				<td style="text-align: right;" id="amount"></td>
 			</tr>
 		</table>
 	</div>
@@ -72,33 +63,6 @@
 		    'CBHiS6kUZPCbkTYzdinJLbFfe3xVkv8csE8dHgG2BcNP',
 		];
 		$(function() {
-			let ore = 'oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp';
-		    $.ajax({
-				url : 'https://price.jup.ag/v6/price?ids=' + ore,
-				type : 'get',
-				dataType : 'json',
-				async : false,
-				success : function(data) {
-					if (data) {
-						let price = Number(data.data[ore].price);
-						$('#price').text(price.toFixed(8));
-					}
-				}
-			});
-			
-			let url = 'https://www2.tw-pool.com/api/worker_stats?address=' + addrs[0] + '&mode=all&excludeWorker=true'
-			$.ajax({
-				url : url,
-				type : 'get',
-				dataType : 'json',
-				success : function(data) {
-					if (data) {
-						$('#balance').text(data.balance.toFixed(8));
-						$('#paid').text(data.paid.toFixed(8));
-					}
-				}
-			});
-			
 			let api = 'https://ec1ipse.me/miner/rewards?pubkey=';
 			let total = 0;
 			for (let i = 0; i < addrs.length; i++) {
@@ -117,6 +81,23 @@
 				});
 			}
 			$('#total').text(total.toFixed(8));
+			
+			let ore = 'oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp';
+		    $.ajax({
+				url : 'https://price.jup.ag/v6/price?ids=' + ore,
+				type : 'get',
+				dataType : 'json',
+				// async : false,
+				success : function(data) {
+					if (data) {
+						let price = Number(data.data[ore].price);
+						$('#price').text(price.toFixed(8));
+						$('#amount').text((total * price).toFixed(8));
+					}
+				}
+			});
+		    
+		    
 		})
 	</script>
 </body>
