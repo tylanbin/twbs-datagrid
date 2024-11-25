@@ -63,43 +63,17 @@
 	<script src="assets/bootstrap-3.4.1/js/bootstrap.min.js"></script>
 	<!-- page script -->
 	<script type="text/javascript">
-		let api_rewards = 'https://domainexpansion.tech/miner/rewards?pubkey=';
+		let api_rewards = 'https://ec1ipse.me/miner/rewards?pubkey=';
 		let api_history = 'https://domainexpansion.tech/miner/submissions?pubkey=';
 		let addrs = [
 			'FHD4Rsuij1FkMPTJ5dGszSU7H2cfW87n8kpTHc8DoNn3',
 			'7zuzLDAAZum3HDxyyJs8vpFZbMzGXiX5grifpZbTzzxc',
 		    'CBHiS6kUZPCbkTYzdinJLbFfe3xVkv8csE8dHgG2BcNP',
 		];
+		let total = 0;
 		$(function() {
-			let total = 0;
-			for (let i = 0; i < addrs.length; i++) {
-				$.ajax({
-					url : api_rewards + addrs[i],
-					type : 'get',
-					dataType : 'json',
-					async : false,
-					success : function(data) {
-						if (data) {
-							let result = Number(data);
-							total += result;
-							$('#ore' + (i + 1)).text(result.toFixed(8));
-							// subtime
-							$.ajax({
-								url : api_history + addrs[i],
-								type : 'get',
-								dataType : 'json',
-								async : false,
-								success : function(data) {
-									if (data && data.length > 0) {
-										$('#subtime' + (i + 1)).text(calcTime(data[0].created_at));
-									}
-								}
-							});
-						}
-					}
-				});
-			}
-			$('#total').text(total.toFixed(8));
+			getRewards();
+			getSubtime();
 			
 			let ore = 'oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp';
 		    $.ajax({
@@ -116,6 +90,57 @@
 				}
 			});
 		});
+		function getRewards() {
+			for (let i = 0; i < addrs.length; i++) {
+				$.ajax({
+					url : api_rewards + addrs[i],
+					type : 'get',
+					dataType : 'json',
+					async : false,
+					timeout : 5000,
+					success : function(data) {
+						if (data) {
+							let result = Number(data);
+							total += result;
+							$('#ore' + (i + 1)).text(result.toFixed(8));
+							
+						}
+					}
+				});
+			}
+			$('#total').text(total.toFixed(8));
+		}
+		async function getSubtime() {
+			for (let i = 0; i < addrs.length; i++) {
+				$.ajax({
+					url : api_history + addrs[i],
+					type : 'get',
+					dataType : 'json',
+					// async : false,
+					timeout : 5000,
+					success : function(data) {
+						if (data && $.isArray(data) && data.length > 0) {
+							$('#subtime' + (i + 1)).text(calcTime(data[0].created_at));
+						}
+					}
+				});
+				setInterval(function() {
+					$.ajax({
+						url : api_history + addrs[i],
+						type : 'get',
+						dataType : 'json',
+						// async : false,
+						timeout : 5000,
+						success : function(data) {
+							if (data && $.isArray(data) && data.length > 0) {
+								$('#subtime' + (i + 1)).text(calcTime(data[0].created_at));
+							}
+						}
+					});
+				}, 30000);
+				await new Promise((resolve) => setTimeout(resolve, 10000));
+			}
+		}
 		function calcTime(dateStr) {
 		    let date = new Date(dateStr);
 		    let offsetInMinutes = new Date().getTimezoneOffset();
