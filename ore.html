@@ -72,45 +72,6 @@
 		];
 		let total = 0;
 		$(function() {
-			getRewards();
-			getSubtime();
-			
-			let ore = 'oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp';
-		    $.ajax({
-				url : 'https://api.jup.ag/price/v2?ids=' + ore,
-				type : 'get',
-				dataType : 'json',
-				// async : false,
-				success : function(data) {
-					if (data) {
-						let price = Number(data.data[ore].price);
-						$('#price').text(price.toFixed(8));
-						$('#amount').text((total * price).toFixed(8));
-					}
-				}
-			});
-		});
-		function getRewards() {
-			for (let i = 0; i < addrs.length; i++) {
-				$.ajax({
-					url : api_rewards + addrs[i],
-					type : 'get',
-					dataType : 'json',
-					async : false,
-					timeout : 5000,
-					success : function(data) {
-						if (data) {
-							let result = Number(data);
-							total += result;
-							$('#ore' + (i + 1)).text(result.toFixed(8));
-							
-						}
-					}
-				});
-			}
-			$('#total').text(total.toFixed(8));
-		}
-		async function getSubtime() {
 			for (let i = 0; i < addrs.length; i++) {
 				$.ajax({
 					url : api_history + addrs[i],
@@ -124,6 +85,31 @@
 						}
 					}
 				});
+			}
+			for (let i = 0; i < addrs.length; i++) {
+				$.ajax({
+					url : api_rewards + addrs[i],
+					type : 'get',
+					dataType : 'json',
+					async : false,
+					timeout : 5000,
+					success : function(data) {
+						if (data) {
+							let result = Number(data);
+							total += result;
+							$('#ore' + (i + 1)).text(result.toFixed(8));
+						}
+					}
+				});
+			}
+			$('#total').text(total.toFixed(8));
+			
+			getSubtime();
+			getRewards();
+			calcTotal();
+		});
+		async function getSubtime() {
+			for (let i = 0; i < addrs.length; i++) {
 				setInterval(function() {
 					$.ajax({
 						url : api_history + addrs[i],
@@ -140,6 +126,49 @@
 				}, 30000);
 				await new Promise((resolve) => setTimeout(resolve, 10000));
 			}
+		}
+		async function getRewards() {
+			for (let i = 0; i < addrs.length; i++) {
+				setInterval(function() {
+					$.ajax({
+						url : api_rewards + addrs[i],
+						type : 'get',
+						dataType : 'json',
+						// async : false,
+						timeout : 5000,
+						success : function(data) {
+							if (data) {
+								let result = Number(data);
+								$('#ore' + (i + 1)).text(result.toFixed(8));
+								calcTotal();
+							}
+						}
+					});
+				}, 30000);
+				await new Promise((resolve) => setTimeout(resolve, 10000));
+			}
+		}
+		function calcTotal() {
+			total = 0;
+			for (let i = 0; i < addrs.length; i++) {
+				let reward = Number($('#ore' + (i + 1)).text());
+				total += reward;
+			}
+			
+			let ore = 'oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp';
+		    $.ajax({
+				url : 'https://api.jup.ag/price/v2?ids=' + ore,
+				type : 'get',
+				dataType : 'json',
+				// async : false,
+				success : function(data) {
+					if (data) {
+						let price = Number(data.data[ore].price);
+						$('#price').text(price.toFixed(8));
+						$('#amount').text((total * price).toFixed(8));
+					}
+				}
+			});
 		}
 		function calcTime(dateStr) {
 		    let date = new Date(dateStr);
