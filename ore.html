@@ -81,8 +81,18 @@
 					timeout : 5000,
 					success : function(data) {
 						if (data && $.isArray(data) && data.length > 0) {
-							$('#subtime' + (i + 1)).text(calcTime(data[0].created_at));
+							let sec = calcTime(data[0].created_at);
+							let str = '';
+							if (sec < 3600) {
+								str = sec + 's ago';
+							} else {
+								str = 'Offline';
+							}
+							$('#subtime' + (i + 1)).text(str);
 						}
+					},
+					error : function() {
+						$('#subtime' + (i + 1)).text('Timeout');
 					}
 				});
 			}
@@ -119,7 +129,14 @@
 						timeout : 5000,
 						success : function(data) {
 							if (data && $.isArray(data) && data.length > 0) {
-								$('#subtime' + (i + 1)).text(calcTime(data[0].created_at));
+								let sec = calcTime(data[0].created_at);
+								let str = '';
+								if (sec < 3600) {
+									str = sec + 's ago';
+								} else {
+									str = 'Offline';
+								}
+								$('#subtime' + (i + 1)).text(str);
 							}
 						}
 					});
@@ -178,8 +195,7 @@
 		    let unixTimestamp = Math.floor(offsetDate.getTime() / 1000);
 		    let now = Math.floor(Date.now() / 1000);
 		    let timeAgoInSeconds = now - unixTimestamp;
-		    let timeAgo = timeAgoInSeconds + 's ago';
-		    return timeAgo;
+		    return timeAgoInSeconds;
 		}
 	</script>
 </body>
