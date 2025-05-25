@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="assets/ore.png">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<title>SupportXMR Rewards</title>
+<!-- Bootstrap -->
+<link href="assets/bootstrap-3.4.1/css/bootstrap.min.css" rel="stylesheet">
+<link href="assets/common/css/style.css" rel="stylesheet">
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+<script src="assets/common/js/html5shiv.min.js"></script>
+<script src="assets/common/js/respond.min.js"></script>
+<![endif]-->
+<link rel="shortcut icon" href="assets/ore.png">
+<style type="text/css">
+	.table th { font-family: monospace; }
+</style>
+</head>
+<body>
+	<!-- Page Content -->
+	<div class="container">
+		<table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+			<tr>
+				<th style="text-align: right;width: 30%;">Workers</th>
+				<td style="text-align: right;" colspan="2" id="workers"></td>
+			</tr>
+			<tr>
+				<th style="text-align: right;">XMR</th>
+				<td style="text-align: right;width: 35%;" id="xmr1"></td>
+				<td style="text-align: right;" id="xmr2"></td>
+			</tr>
+			<tr>
+				<th style="text-align: right;">Tari</th>
+				<td style="text-align: right;" id="tari1"></td>
+				<td style="text-align: right;" id="tari2"></td>
+			</tr>
+		</table>
+	</div>
+	<!-- /.container -->
+	
+	<!-- scripts -->
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="assets/common/js/jquery.min.js"></script>
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script src="assets/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+	<!-- page script -->
+	<script type="text/javascript">
+		let addr = '42A8W591mNV3wFKbRaXQwZ4w4bAqW9QWUHg4qauUfBQWGp3wKCQhgYT5in1M3m389xEHjD4JrHHHaWzUc5CMt5xoMZw1Mkz';
+		let api = 'https://www.supportxmr.com/api';
+		$(function() {
+			getWorkers();
+			setInterval(getWorkers, 30000);
+			getXMR();
+			setInterval(getXMR, 60000);
+			getTari();
+			setInterval(getTari, 60000);
+		});
+		function getWorkers() {
+			$.ajax({
+				url : api + '/miner/' + addr + '/identifiers',
+				type : 'get',
+				dataType : 'json',
+				// async : false,
+				timeout : 5000,
+				success : function(data) {
+					let result = '';
+					if (data && data.length) {
+						// 查询各个worker的hash历史
+						let arr = [];
+						for (let i = 0; i < data.length; i++) {
+							let worker = data[i];
+							let isLast = i == data.length;
+							$.ajax({
+								url : api + '/miner/' + addr + '/chart/hashrate/' + worker,
+								type : 'get',
+								dataType : 'json',
+								async : false,
+								timeout : 5000,
+								success : function(data) {
+									if (data && data.length) {
+										let date = new Date(data[0].ts);
+										let secs = (new Date().getTime() - date.getTime()) / 1000;
+										arr.push(worker + '(' + secs.toFixed(0) + 's)');
+									}
+								}
+							});
+						}
+						result = $.trim(arr.join(', '));
+					} else {
+						result = 'Offline';
+					}
+					$('#workers').html(result);
+				},
+				error : function() {
+					$('#workers').text('Offline');
+				}
+			});
+		}
+		function getXMR() {
+			// xmr
+			$.ajax({
+				url : api + '/miner/' + addr + '/stats',
+				type : 'get',
+				dataType : 'json',
+				// async : false,
+				timeout : 5000,
+				success : function(data) {
+					$('#xmr1').text(0);
+					$('#xmr2').text(0);
+					// 余额需要小数点左移12位
+					if (data && data.amtDue) 
+						$('#xmr1').text((parseFloat(data.amtDue) / 1e12).toFixed(6));
+					if (data && data.amtPaid) 
+						$('#xmr2').text((parseFloat(data.amtPaid) / 1e12).toFixed(6));
+				},
+				error : function() {
+					$('#xmr1').text(0);
+					$('#xmr2').text(0);
+				}
+			});
+		}
+		function getTari() {
+			// tari
+			$.ajax({
+				url : api + '/tari/balance/' + addr,
+				type : 'get',
+				dataType : 'json',
+				// async : false,
+				timeout : 5000,
+				success : function(data) {
+					$('#tari1').text(0);
+					$('#tari2').text(0);
+					// 余额需要小数点左移6位
+					if (data && data.pending) 
+						$('#tari1').text((parseFloat(data.pending) / 1e6).toFixed(6));
+					if (data && data.paid) 
+						$('#tari2').text((parseFloat(data.paid) / 1e6).toFixed(6));
+				},
+				error : function() {
+					$('#tari1').text(0);
+					$('#tari2').text(0);
+				}
+			});
+		}
+	</script>
+</body>
+</html>
